@@ -21,8 +21,8 @@ RSpec.describe SleepRecords::Following do
   it 'returns sleep records of followed users within 7 days' do
     result = described_class.new(user_id: user.id).call
     expect(result).to be_success
-    expect(result.value![:data]).to include(@recent_record)
-    expect(result.value![:data]).not_to include(@old_record)
+    expect(result.value![:data].map { |r| r[:id] }).to include(@recent_record.id)
+    expect(result.value![:data].map { |r| r[:id] }).not_to include(@old_record.id)
     expect(result.value![:meta][:total_data]).to eq(1)
   end
 
@@ -69,7 +69,8 @@ RSpec.describe SleepRecords::Following do
     result = described_class.new(user_id: user.id).call
     expect(result).to be_success
     records = result.value![:data]
-    expect(records.first).to eq(record2)
-    expect(records.last).to eq(record1)
+    expect(records.first[:id]).to eq(record2.id)
+    expect(records.first[:user][:name]).to eq(followed_user.name)
+    expect(records.last[:id]).to eq(record1.id)
   end
 end
