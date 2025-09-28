@@ -10,3 +10,7 @@ AllCops:
 # Disable documentation requirement
 Style/Documentation:
   Enabled: true
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/controllers/sleep_records_controller_spec.rb'

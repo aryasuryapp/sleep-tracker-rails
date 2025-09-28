@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 # spec/controllers/sleep_records_controller_spec.rb
 require 'rails_helper'
 
 def json_response
-  JSON.parse(response.body)
+  response.parsed_body
 end
 
 RSpec.describe SleepRecordsController, type: :controller do
@@ -29,9 +31,9 @@ RSpec.describe SleepRecordsController, type: :controller do
   describe 'POST #clock_in' do
     it 'creates a new sleep record if none is open' do
       user.sleep_records.where(end_time: nil).delete_all
-      expect {
+      expect do
         post :clock_in, params: { id: user.id }
-      }.to change { user.sleep_records.count }.by(1)
+      end.to change { user.sleep_records.count }.by(1)
       expect(response).to have_http_status(:created)
       expect(json_response['end_time']).to be_nil
     end
