@@ -8,12 +8,12 @@ Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   resources :users, only: %i[index show create] do
-    collection do
-      post :follow
-      delete :unfollow
-      get ':id/followers', to: 'users#followers'
-      get ':id/following', to: 'users#following'
-      get ':id/following/sleep_records', to: 'users#following_sleep_records'
+    member do
+      post 'follow', to: 'users#follow'
+      delete 'unfollow', to: 'users#unfollow'
+      get 'followers', to: 'users#followers'
+      get 'following', to: 'users#following'
+      get 'following/sleep_records', to: 'users#following_sleep_records'
     end
   end
 

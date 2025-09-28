@@ -28,7 +28,7 @@ RSpec.describe UsersController, type: :controller do
 
   describe 'GET #show' do
     it 'returns the specified user' do
-      get :show, params: { id: user1.id }
+      get :show, params: { current_user_id: user1.id, id: user1.id }
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(user1.id)
     end
@@ -36,14 +36,14 @@ RSpec.describe UsersController, type: :controller do
 
   describe 'GET #followers' do
     it 'returns the followers of the specified user' do
-      get :followers, params: { id: user2.id }
+      get :followers, params: { current_user_id: user2.id, id: user2.id }
       expect(response).to have_http_status(:ok)
       expect(json_response.size).to eq(1)
       expect(json_response.first['id']).to eq(user1.id)
     end
 
     it 'returns empty array if user has no followers' do
-      get :followers, params: { id: user1.id }
+      get :followers, params: { current_user_id: user1.id, id: user1.id }
       expect(response).to have_http_status(:ok)
       expect(json_response).to eq([])
     end
@@ -51,14 +51,14 @@ RSpec.describe UsersController, type: :controller do
 
   describe 'GET #following' do
     it 'returns the users followed by the specified user' do
-      get :following, params: { id: user1.id }
+      get :following, params: { current_user_id: user1.id, id: user1.id }
       expect(response).to have_http_status(:ok)
       expect(json_response.size).to eq(1)
       expect(json_response.first['id']).to eq(user2.id)
     end
 
     it 'returns empty array if user is not following anyone' do
-      get :following, params: { id: user3.id }
+      get :following, params: { current_user_id: user3.id, id: user3.id }
       expect(response).to have_http_status(:ok)
       expect(json_response).to eq([])
     end
@@ -74,7 +74,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     it 'returns sleep records of followed users' do
-      get :following_sleep_records, params: { id: user1.id }
+      get :following_sleep_records, params: { current_user_id: user1.id, id: user1.id }
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].size).to eq(1)
       expect(json_response['data'].first['id']).to eq(other_record.id)
@@ -82,7 +82,7 @@ RSpec.describe UsersController, type: :controller do
 
     it 'returns not found if no following sleep records' do
       follow.destroy
-      get :following_sleep_records, params: { id: user1.id }
+      get :following_sleep_records, params: { current_user_id: user1.id, id: user1.id }
       expect(response).to have_http_status(:not_found)
       expect(json_response['error']).to eq('No following sleep records found.')
     end
@@ -90,32 +90,32 @@ RSpec.describe UsersController, type: :controller do
 
   describe 'POST #follow' do
     it 'allows the current user to follow another user' do
-      post :follow, params: { id: user1.id, target_user_id: user3.id }
+      post :follow, params: { current_user_id: user1.id, id: user3.id }
       expect(json_response['error']).to be_nil
       expect(response).to have_http_status(:created)
       expect(json_response['message']).to eq('Followed successfully!')
       expect(json_response['data']['followed_user']['id']).to eq(user3.id)
       expect(json_response['data']['followed_user']['name']).to eq(user3.name)
 
-      get :following, params: { id: user1.id }
+      get :following, params: { current_user_id: user1.id, id: user1.id }
       expect(json_response.size).to eq(2)
       expect(json_response.map { |u| u['id'] }).to include(user2.id, user3.id)
     end
 
     it 'returns error if trying to follow oneself' do
-      post :follow, params: { id: user1.id, target_user_id: user1.id }
+      post :follow, params: { current_user_id: user1.id, id: user1.id }
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']).to eq('Cannot follow yourself.')
     end
 
     it 'returns error if target user does not exist' do
-      post :follow, params: { id: user1.id, target_user_id: 999 }
+      post :follow, params: { current_user_id: user1.id, id: 999 }
       expect(response).to have_http_status(:not_found)
       expect(json_response['error']).to eq('Target user not found.')
     end
 
     it 'returns error if already following the user' do
-      post :follow, params: { id: user1.id, target_user_id: user2.id }
+      post :follow, params: { current_user_id: user1.id, id: user2.id }
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']).to eq('Already following this user.')
     end
@@ -130,19 +130,19 @@ RSpec.describe UsersController, type: :controller do
 
   describe 'DELETE #unfollow' do
     it 'allows the current user to unfollow another user' do
-      delete :unfollow, params: { id: user1.id, target_user_id: user2.id }
+      delete :unfollow, params: { current_user_id: user1.id, id: user2.id }
       expect(json_response['error']).to be_nil
       expect(response).to have_http_status(:ok)
       expect(json_response['message']).to eq('Unfollowed successfully!')
       expect(json_response['data']['unfollowed_user']['id']).to eq(user2.id)
       expect(json_response['data']['unfollowed_user']['name']).to eq(user2.name)
 
-      get :following, params: { id: user1.id }
+      get :following, params: { current_user_id: user1.id, id: user1.id }
       expect(json_response).to be_empty
     end
 
     it 'returns error if target user does not exist' do
-      delete :unfollow, params: { id: user1.id, target_user_id: 999 }
+      delete :unfollow, params: { current_user_id: user1.id, id: 999 }
       expect(response).to have_http_status(:not_found)
       expect(json_response['error']).to eq('Target user not found.')
     end

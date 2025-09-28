@@ -38,7 +38,7 @@ class UsersController < ApplicationController
   end
 
   def follow
-    result = FollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
+    result = FollowUser.new(follower: current_user, followed: User.find(params[:id])).call
 
     if result.success?
       render json: { message: result.success[:message], data: result.success[:data] }, status: :created
@@ -53,7 +53,7 @@ class UsersController < ApplicationController
   end
 
   def unfollow
-    result = UnfollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
+    result = UnfollowUser.new(follower: current_user, followed: User.find(params[:id])).call
 
     if result.success?
       render json: { message: result.success[:message], data: result.success[:data] }, status: :ok
