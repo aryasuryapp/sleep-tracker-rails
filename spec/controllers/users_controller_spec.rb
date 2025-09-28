@@ -106,6 +106,9 @@ RSpec.describe UsersController, type: :controller do
       delete :unfollow, params: { id: user1.id, target_user_id: user2.id }
       expect(json_response['error']).to be_nil
       expect(response).to have_http_status(:ok)
+      expect(json_response['message']).to eq('Unfollowed successfully!')
+      expect(json_response['data']['unfollowed_user']['id']).to eq(user2.id)
+      expect(json_response['data']['unfollowed_user']['name']).to eq(user2.name)
 
       get :following, params: { id: user1.id }
       expect(json_response).to be_empty

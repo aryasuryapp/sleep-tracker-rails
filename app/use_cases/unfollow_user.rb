@@ -14,6 +14,6 @@ class UnfollowUser
     return Failure("Not following user with ID #{@followed.id}") if follow.nil?
 
     follow.destroy!
-    Success('Unfollowed successfully!')
+    Success(message: 'Unfollowed successfully!', data: { unfollowed_user: @followed })
   end
 end

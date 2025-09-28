@@ -46,7 +46,7 @@ class UsersController < ApplicationController
     result = UnfollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
 
     if result.success?
-      render json: { message: 'Unfollowed successfully' }, status: :ok
+      render json: { message: result.success[:message], data: result.success[:data] }, status: :ok
     else
       render json: { error: result.failure }, status: :unprocessable_entity
     end
