@@ -1,0 +1,12 @@
+# RuboCop configuration for Sleep Tracker Rails
+
+require:
+  - rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 3.2.2
+  NewCops: enable
+
+# Disable documentation requirement
+Style/Documentation:
+  Enabled: true

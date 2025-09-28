@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Create sleep_records table with necessary fields and indexes
 class CreateSleepRecords < ActiveRecord::Migration[7.1]
   def change
     create_table :sleep_records do |t|

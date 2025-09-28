@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Create follows table to manage user follow relationships
 class CreateFollows < ActiveRecord::Migration[7.1]
   def change
     create_table :follows do |t|
