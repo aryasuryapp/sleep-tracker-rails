@@ -15,7 +15,7 @@ class SleepRecordsController < ApplicationController
   def clock_in
     # Ensure user doesn't already have an open record (end_time is nil)
     if current_user.sleep_records.where(end_time: nil).exists?
-      return render json: { error: "Already clocked in, must clock out first." }, status: :unprocessable_entity
+      return render json: { error: "Already clocked in, must clock out first." }, status: :unprocessable_content
     end
 
     record = current_user.sleep_records.create!(start_time: Time.current)
@@ -27,7 +27,7 @@ class SleepRecordsController < ApplicationController
     record = current_user.sleep_records.where(end_time: nil).order(created_at: :desc).first
 
     unless record
-      return render json: { error: "No active sleep session found." }, status: :unprocessable_entity
+      return render json: { error: "No active sleep session found." }, status: :unprocessable_content
     end
 
     record.update!(end_time: Time.current)

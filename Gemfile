@@ -43,6 +43,7 @@ group :development, :test do
   # Load environment variables from .env files
   gem 'dotenv-rails'
   gem 'faker'
+  gem 'rspec-rails'
 end
 
 group :development do
