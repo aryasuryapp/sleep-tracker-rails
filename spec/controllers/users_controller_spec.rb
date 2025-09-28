@@ -63,4 +63,40 @@ RSpec.describe UsersController, type: :controller do
       expect(json_response).to eq([])
     end
   end
+
+  describe 'POST #follow' do
+    it 'allows the current user to follow another user' do
+      post :follow, params: { id: user1.id, target_user_id: user3.id }
+      expect(response).to have_http_status(:no_content)
+
+      get :following, params: { id: user1.id }
+      expect(json_response.size).to eq(2)
+      expect(json_response.map { |u| u['id'] }).to include(user2.id, user3.id)
+    end
+
+    it 'returns error if trying to follow oneself' do
+      post :follow, params: { id: user1.id, target_user_id: user1.id }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']).to eq('Cannot follow yourself.')
+    end
+
+    it 'returns error if target user does not exist' do
+      post :follow, params: { id: user1.id, target_user_id: 999 }
+      expect(response).to have_http_status(:not_found)
+      expect(json_response['error']).to eq('Target user not found.')
+    end
+
+    it 'returns error if already following the user' do
+      post :follow, params: { id: user1.id, target_user_id: user2.id }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']).to eq('Already following this user.')
+    end
+
+    it 'returns error if current user not found' do
+      allow(User).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+      post :follow, params: { id: 999, target_user_id: user2.id }
+      expect(response).to have_http_status(:not_found)
+      expect(json_response['error']).to eq('Current user not found.')
+    end
+  end
 end
