@@ -24,12 +24,13 @@ class SleepRecordsController < ApplicationController
 
   # POST /sleep_records/clock_out
   def clock_out
-    record = current_user.sleep_records.where(end_time: nil).order(created_at: :desc).first
-
-    return render json: { error: 'No active sleep session found.' }, status: :unprocessable_content unless record
-
-    record.update!(end_time: Time.current)
-    render json: record
+    result = SleepRecords::ClockOut.new(user: current_user).call
+    if result.success?
+      render json: { message: result.success[:message], data: result.success[:data] }, status: :ok
+    else
+      error = result.failure
+      render json: { error: error[:message] }, status: error[:status]
+    end
   end
 
   private

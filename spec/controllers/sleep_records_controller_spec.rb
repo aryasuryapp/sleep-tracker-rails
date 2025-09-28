@@ -51,8 +51,8 @@ RSpec.describe SleepRecordsController, type: :controller do
       open_record = user.sleep_records.create!(start_time: Time.current, end_time: nil)
       post :clock_out, params: { id: user.id }
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(open_record.id)
-      expect(json_response['end_time']).not_to be_nil
+      expect(json_response['data']['id']).to eq(open_record.id)
+      expect(json_response['data']['end_time']).not_to be_nil
     end
 
     it 'returns error if no active sleep session' do
