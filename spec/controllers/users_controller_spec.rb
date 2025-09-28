@@ -67,7 +67,8 @@ RSpec.describe UsersController, type: :controller do
   describe 'POST #follow' do
     it 'allows the current user to follow another user' do
       post :follow, params: { id: user1.id, target_user_id: user3.id }
-      expect(response).to have_http_status(:no_content)
+      expect(json_response['error']).to be_nil
+      expect(response).to have_http_status(:created)
 
       get :following, params: { id: user1.id }
       expect(json_response.size).to eq(2)

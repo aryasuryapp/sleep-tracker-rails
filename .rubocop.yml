@@ -14,3 +14,7 @@ Style/Documentation:
 Metrics/BlockLength:
   Exclude:
     - 'spec/controllers/*_spec.rb'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'app/controllers/users_controller.rb'

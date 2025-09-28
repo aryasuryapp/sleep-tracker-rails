@@ -27,18 +27,17 @@ class UsersController < ApplicationController
   end
 
   def follow
-    target_user = User.find(params[:target_user_id])
-    FollowUser.new(follower: current_user, followed: target_user).call
-  rescue ArgumentError => e
-    render json: { error: e.message }, status: :unprocessable_content
+    result = FollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
+
+    if result.success?
+      follow = result.value!
+      render json: { message: 'Followed successfully', follow: follow }, status: :created
+    else
+      error = result.failure
+      render json: { error: error[:message] }, status: error[:status]
+    end
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Target user not found.' }, status: :not_found
-  rescue ActiveRecord::RecordInvalid => e
-    if e.record.errors.full_messages.include?('Follower has already been taken')
-      return render json: { error: 'Already following this user.' }, status: :unprocessable_content
-    end
-
-    render json: { error: e.record.errors.full_messages.join(', ') }, status: :unprocessable_content
   rescue StandardError => e
     render json: { error: e.message }, status: :internal_server_error
   end
