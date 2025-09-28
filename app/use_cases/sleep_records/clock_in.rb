@@ -15,8 +15,9 @@ module SleepRecords
         return Failure(message: 'Already clocked in, must clock out first.', status: :unprocessable_content)
       end
 
-      record = @user.sleep_records.create!(start_time: Time.current)
-      Success(message: 'Clock-in successful.', data: record)
+      @user.sleep_records.create!(start_time: Time.current)
+      records = @user.sleep_records.order(created_at: :desc).limit(10)
+      Success(message: 'Clock-in successful.', data: records)
     rescue StandardError => e
       Failure(message: e.message, status: :internal_server_error)
     end
