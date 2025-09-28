@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   resources :users, only: %i[index show create]
 
+  resources :sleep_records, only: [:index]
+
   # Defines the root path route ("/")
   # root "posts#index"
 end
