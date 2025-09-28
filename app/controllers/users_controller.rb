@@ -43,8 +43,13 @@ class UsersController < ApplicationController
   end
 
   def unfollow
-    UnfollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
-    render json: { message: 'Unfollowed successfully' }, status: :ok
+    result = UnfollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
+
+    if result.success?
+      render json: { message: 'Unfollowed successfully' }, status: :ok
+    else
+      render json: { error: result.failure }, status: :unprocessable_entity
+    end
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Target user not found.' }, status: :not_found
   rescue StandardError => e
