@@ -13,13 +13,13 @@ class SleepRecordsController < ApplicationController
 
   # POST /sleep_records/clock_in
   def clock_in
-    # Ensure user doesn't already have an open record (end_time is nil)
-    if current_user.sleep_records.exists?(end_time: nil)
-      return render json: { error: 'Already clocked in, must clock out first.' }, status: :unprocessable_content
+    result = SleepRecords::ClockIn.new(user: current_user).call
+    if result.success?
+      render json: { message: result.success[:message], data: result.success[:data] }, status: :created
+    else
+      error = result.failure
+      render json: { error: error[:message] }, status: error[:status]
     end
-
-    record = current_user.sleep_records.create!(start_time: Time.current)
-    render json: record, status: :created
   end
 
   # POST /sleep_records/clock_out
