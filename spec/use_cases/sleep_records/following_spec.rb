@@ -10,7 +10,8 @@ RSpec.describe SleepRecords::Following do
   before do
     Follow.create!(follower: user, followed: followed_user)
     # Sleep records for followed user (within 7 days)
-    @recent_record = SleepRecord.create!(user: followed_user, start_time: 2.days.ago, end_time: 1.day.ago)
+    @recent_record = SleepRecord.create!(user: followed_user, start_time: 2.days.ago, end_time: 1.day.ago,
+                                         duration: 1.day)
     # Sleep records for followed user (older than 7 days)
     @old_record = SleepRecord.create!(user: followed_user, start_time: 10.days.ago, end_time: 9.days.ago)
     # Sleep records for other user
@@ -43,5 +44,32 @@ RSpec.describe SleepRecords::Following do
     expect(result.value![:meta][:page]).to eq(2)
     expect(result.value![:meta][:per_page]).to eq(20)
     expect(result.value![:meta][:total_data]).to eq(26)
+  end
+
+  it 'handles invalid page and per_page parameters' do
+    result = described_class.new(user_id: user.id, page: -1, per_page: 0).call
+    expect(result).to be_success
+    expect(result.value![:meta][:page]).to eq(1)
+    expect(result.value![:meta][:per_page]).to eq(20)
+  end
+
+  it 'defaults per_page to 20 if less than 1' do
+    result = described_class.new(user_id: user.id, page: 1, per_page: -5).call
+    expect(result).to be_success
+    expect(result.value![:meta][:page]).to eq(1)
+    expect(result.value![:meta][:per_page]).to eq(20)
+    expect(result.value![:meta][:total_data]).to eq(1)
+  end
+
+  it 'orders records by duration descending' do
+    record1 = SleepRecord.create!(user: followed_user, start_time: 4.days.ago + 5.hours, end_time: 3.days.ago,
+                                  duration: 1.day - 5.hours) # 1 day
+    record2 = SleepRecord.create!(user: followed_user, start_time: 5.days.ago, end_time: 3.days.ago,
+                                  duration: 2.days) # 2 days
+    result = described_class.new(user_id: user.id).call
+    expect(result).to be_success
+    records = result.value![:data]
+    expect(records.first).to eq(record2)
+    expect(records.last).to eq(record1)
   end
 end

@@ -17,7 +17,7 @@ module SleepRecords
                               .where(follows: { follower_id: @user_id })
                               .where(start_time: 7.days.ago..Time.current)
       total_data = base_query.count
-      records = base_query.order(updated_at: :desc)
+      records = base_query.order(duration: :desc)
                           .limit(@per_page)
                           .offset(offset)
 
