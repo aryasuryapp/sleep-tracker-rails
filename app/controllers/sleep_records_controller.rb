@@ -32,15 +32,4 @@ class SleepRecordsController < ApplicationController
       render json: { error: error[:message] }, status: error[:status]
     end
   end
-
-  private
-
-  def set_user
-    @user = User.find(params[:id])
-  end
-
-  # In a real app this comes from authentication
-  def current_user
-    @user # Replace with auth logic (e.g. Devise)
-  end
 end

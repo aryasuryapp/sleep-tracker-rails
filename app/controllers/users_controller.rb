@@ -65,16 +65,4 @@ class UsersController < ApplicationController
   rescue StandardError => e
     render json: { error: e.message }, status: :internal_server_error
   end
-
-  private
-
-  def set_user
-    @user = User.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Current user not found.' }, status: :not_found
-  end
-
-  def current_user
-    @user # Replace with auth logic (e.g. Devise)
-  end
 end
