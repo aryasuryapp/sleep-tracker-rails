@@ -15,7 +15,7 @@ class FollowUser
     return Failure(message: 'Cannot follow yourself.', status: :unprocessable_content) if @follower == @followed
 
     Follow.create!(follower: @follower, followed: @followed)
-    Success('Followed successfuly!')
+    Success(message: 'Followed successfully!', data: { followed_user: @followed })
   rescue ActiveRecord::RecordInvalid => e
     if e.record.errors.full_messages.include?('Follower has already been taken')
       return Failure(message: 'Already following this user.', status: :unprocessable_content)

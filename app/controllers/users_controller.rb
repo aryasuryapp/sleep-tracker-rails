@@ -30,8 +30,7 @@ class UsersController < ApplicationController
     result = FollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
 
     if result.success?
-      follow = result.value!
-      render json: { message: 'Followed successfully', follow: follow }, status: :created
+      render json: { message: result.success[:message], data: result.success[:data] }, status: :created
     else
       error = result.failure
       render json: { error: error[:message] }, status: error[:status]

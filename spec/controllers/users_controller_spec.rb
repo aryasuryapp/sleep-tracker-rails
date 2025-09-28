@@ -69,6 +69,9 @@ RSpec.describe UsersController, type: :controller do
       post :follow, params: { id: user1.id, target_user_id: user3.id }
       expect(json_response['error']).to be_nil
       expect(response).to have_http_status(:created)
+      expect(json_response['message']).to eq('Followed successfully!')
+      expect(json_response['data']['followed_user']['id']).to eq(user3.id)
+      expect(json_response['data']['followed_user']['name']).to eq(user3.name)
 
       get :following, params: { id: user1.id }
       expect(json_response.size).to eq(2)
