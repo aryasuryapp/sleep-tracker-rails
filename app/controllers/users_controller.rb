@@ -26,6 +26,17 @@ class UsersController < ApplicationController
     render json: following
   end
 
+  def following_sleep_records
+    result = SleepRecords::Following.new(user_id: params[:id], page: params[:page], per_page: params[:per_page]).call
+    if result.success?
+      render json: { message: result.success[:message], data: result.success[:data], meta: result.success[:meta] },
+             status: :ok
+    else
+      error = result.failure
+      render json: { error: error[:message] }, status: error[:status]
+    end
+  end
+
   def follow
     result = FollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
 

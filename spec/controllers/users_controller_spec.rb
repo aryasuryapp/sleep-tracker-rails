@@ -64,6 +64,30 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
+  describe 'GET #following_sleep_records' do
+    let(:other_user) { User.create!(name: 'Other User') }
+    let(:follow) { Follow.create!(follower: user1, followed: other_user) }
+    let!(:other_record) { other_user.sleep_records.create!(start_time: 3.days.ago, end_time: 2.days.ago) }
+
+    before do
+      follow
+    end
+
+    it 'returns sleep records of followed users' do
+      get :following_sleep_records, params: { id: user1.id }
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].size).to eq(1)
+      expect(json_response['data'].first['id']).to eq(other_record.id)
+    end
+
+    it 'returns not found if no following sleep records' do
+      follow.destroy
+      get :following_sleep_records, params: { id: user1.id }
+      expect(response).to have_http_status(:not_found)
+      expect(json_response['error']).to eq('No following sleep records found.')
+    end
+  end
+
   describe 'POST #follow' do
     it 'allows the current user to follow another user' do
       post :follow, params: { id: user1.id, target_user_id: user3.id }

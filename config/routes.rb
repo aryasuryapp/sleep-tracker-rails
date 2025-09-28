@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       delete :unfollow
       get ':id/followers', to: 'users#followers'
       get ':id/following', to: 'users#following'
+      get ':id/following/sleep_records', to: 'users#following_sleep_records'
     end
   end
 
@@ -20,7 +21,6 @@ Rails.application.routes.draw do
     collection do
       post :clock_in
       post :clock_out
-      get :following
     end
   end
 
