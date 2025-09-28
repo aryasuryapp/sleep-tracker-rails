@@ -8,4 +8,19 @@ class UsersController < ApplicationController
     records = User.all
     render json: records
   end
+
+  def show
+    user = User.find(params[:id])
+    render json: user
+  end
+
+  def followers
+    user = User.find(params[:id])
+    render json: user.followers
+  end
+
+  def following
+    user = User.find(params[:id])
+    render json: user.following
+  end
 end

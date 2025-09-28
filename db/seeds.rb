@@ -22,6 +22,15 @@ end
 
 puts "✅ Created #{users.count} users"
 
+# Create follow relationships
+Follow.find_or_create_by!(follower: users[0], followed: users[1]) # Alice follows Bob
+Follow.find_or_create_by!(follower: users[0], followed: users[2]) # Alice follows Charlie
+Follow.find_or_create_by!(follower: users[1], followed: users[2]) # Bob follows Charlie
+Follow.find_or_create_by!(follower: users[2], followed: users[3]) # Charlie follows Diana
+Follow.find_or_create_by!(follower: users[3], followed: users[4]) # Diana follows Eve
+
+puts "✅ Created #{Follow.count} follow relationships"
+
 # Create random sleep records for past 7 days
 users.each do |user|
   5.times do
