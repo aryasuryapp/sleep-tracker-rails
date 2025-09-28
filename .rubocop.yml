@@ -13,7 +13,7 @@ Style/Documentation:
 
 Metrics/BlockLength:
   Exclude:
-    - 'spec/controllers/*_spec.rb'
+    - 'spec/**/*_spec.rb'
 
 Metrics/MethodLength:
   Exclude:
