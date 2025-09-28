@@ -5,22 +5,22 @@ class UsersController < ApplicationController
   # GET /users
   # List all current users
   def index
-    records = User.all
+    records = ListUsers.new.call
     render json: records
   end
 
   def show
-    user = User.find(params[:id])
+    user = ShowUser.new.call(params[:id])
     render json: user
   end
 
   def followers
-    user = User.find(params[:id])
-    render json: user.followers
+    followers = ListFollowers.new.call(params[:id])
+    render json: followers
   end
 
   def following
-    user = User.find(params[:id])
-    render json: user.following
+    following = ListFollowing.new.call(params[:id])
+    render json: following
   end
 end
