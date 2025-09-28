@@ -2,7 +2,7 @@
 
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[show followers following follow]
+  before_action :set_user, only: %i[show followers following follow unfollow]
 
   # GET /users
   # List all current users
@@ -36,6 +36,15 @@ class UsersController < ApplicationController
       error = result.failure
       render json: { error: error[:message] }, status: error[:status]
     end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Target user not found.' }, status: :not_found
+  rescue StandardError => e
+    render json: { error: e.message }, status: :internal_server_error
+  end
+
+  def unfollow
+    UnfollowUser.new(follower: current_user, followed: User.find(params[:target_user_id])).call
+    render json: { message: 'Unfollowed successfully' }, status: :ok
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Target user not found.' }, status: :not_found
   rescue StandardError => e

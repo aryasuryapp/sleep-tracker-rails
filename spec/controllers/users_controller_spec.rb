@@ -100,4 +100,28 @@ RSpec.describe UsersController, type: :controller do
       expect(json_response['error']).to eq('Current user not found.')
     end
   end
+
+  describe 'DELETE #unfollow' do
+    it 'allows the current user to unfollow another user' do
+      delete :unfollow, params: { id: user1.id, target_user_id: user2.id }
+      expect(json_response['error']).to be_nil
+      expect(response).to have_http_status(:ok)
+
+      get :following, params: { id: user1.id }
+      expect(json_response).to be_empty
+    end
+
+    it 'returns error if target user does not exist' do
+      delete :unfollow, params: { id: user1.id, target_user_id: 999 }
+      expect(response).to have_http_status(:not_found)
+      expect(json_response['error']).to eq('Target user not found.')
+    end
+
+    it 'returns error if current user not found' do
+      allow(User).to receive(:find).and_raise(ActiveRecord::RecordNotFound)
+      delete :unfollow, params: { id: 999, target_user_id: user2.id }
+      expect(response).to have_http_status(:not_found)
+      expect(json_response['error']).to eq('Current user not found.')
+    end
+  end
 end

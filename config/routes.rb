@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :users, only: %i[index show create] do
     collection do
       post :follow
+      delete :unfollow
       get ':id/followers', to: 'users#followers'
       get ':id/following', to: 'users#following'
     end
