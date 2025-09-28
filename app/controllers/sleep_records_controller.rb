@@ -32,6 +32,16 @@ class SleepRecordsController < ApplicationController
     render json: record
   end
 
+  def following
+    result = SleepRecords::Following.new(user_id: params[:id]).call
+    if result.success?
+      render json: { message: result.success[:message], data: result.success[:data] }, status: :ok
+    else
+      error = result.failure
+      render json: { error: error[:message] }, status: error[:status]
+    end
+  end
+
   private
 
   def set_user
