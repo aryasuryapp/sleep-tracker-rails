@@ -9,3 +9,16 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# rubocop:disable Rails/Output
+puts '🌱 Seeding database...'
+
+# Create sample users
+users = %w[Alice Bob Charlie Diana Eve].map do |name|
+  User.find_or_create_by!(name: name)
+end
+
+puts "✅ Created #{users.count} users"
+
+puts '🌱 Seeding done!'
+# rubocop:enable Rails/Output
