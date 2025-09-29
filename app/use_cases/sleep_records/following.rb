@@ -16,7 +16,7 @@ module SleepRecords
       base_query = SleepRecord.includes(:user)
                               .joins(user: :followers)
                               .where(follows: { follower_id: @user_id })
-                              .where(start_time: 7.days.ago..Time.current)
+                              .where(created_at: 7.days.ago..Time.current)
       total_data = base_query.count
       records = base_query.order(duration: :desc)
                           .limit(@per_page)

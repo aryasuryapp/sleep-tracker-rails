@@ -11,9 +11,10 @@ RSpec.describe SleepRecords::Following do
     Follow.create!(follower: user, followed: followed_user)
     # Sleep records for followed user (within 7 days)
     @recent_record = SleepRecord.create!(user: followed_user, start_time: 2.days.ago, end_time: 1.day.ago,
-                                         duration: 1.day)
+                                         duration: 1.day, created_at: 2.days.ago)
     # Sleep records for followed user (older than 7 days)
-    @old_record = SleepRecord.create!(user: followed_user, start_time: 10.days.ago, end_time: 9.days.ago)
+    @old_record = SleepRecord.create!(user: followed_user, start_time: 10.days.ago, end_time: 9.days.ago,
+                                      created_at: 10.days.ago)
     # Sleep records for other user
     SleepRecord.create!(user: other_user, start_time: 2.days.ago, end_time: 1.day.ago)
   end
