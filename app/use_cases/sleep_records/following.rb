@@ -13,9 +13,9 @@ module SleepRecords
 
     def call
       offset = (@page - 1) * @per_page
+      following_users = User.joins(:followers).where(follows: { follower_id: @user_id }).select(:id)
       base_query = SleepRecord.includes(:user)
-                              .joins(user: :followers)
-                              .where(follows: { follower_id: @user_id })
+                              .where(user_id: following_users)
                               .where(created_at: 7.days.ago..Time.current)
       total_data = base_query.count
       records = base_query.order(duration: :desc)
